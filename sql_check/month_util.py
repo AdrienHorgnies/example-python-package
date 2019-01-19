@@ -20,7 +20,11 @@ def previous_month():
 def month_from_str(year_month):
     """
     get the first day of the month represented by year_month
-    :param year_month: str which four first characters are the year and last two the month; "201901" is Jan 2019
+    :param year_month: four first characters are the year and last two the month; "201901" is Jan 2019
+    :type year_month: str
     :return: date object set the the 1st day of specified month
     """
-    return None
+    year = int(year_month[:4])
+    month = int(year_month[4:])
+
+    return date(year, month, 1)
