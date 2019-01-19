@@ -4,7 +4,7 @@ JANUARY = 1
 DECEMBER = 12
 
 
-def previous_month():
+def previous():
     """
     get the first day of the previous month
     :return: date object set at 1st day of previous month
@@ -17,7 +17,7 @@ def previous_month():
     return today.replace(year=result_year, month=result_month, day=1)
 
 
-def month_from_str(year_month):
+def from_str(year_month):
     """
     get the first day of the month represented by year_month
     :param year_month: four first characters are the year and last two the month; "201901" is Jan 2019
