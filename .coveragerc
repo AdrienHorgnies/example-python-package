@@ -1,0 +1,3 @@
+[run]
+source = sql_check
+omit = **/__init__.py
