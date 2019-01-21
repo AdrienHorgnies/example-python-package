@@ -1,3 +1,6 @@
+import re
+
+
 def str_from_file(file_path):
     """
     Get query contained within file as a single line query without indentation or comments.
@@ -6,4 +9,9 @@ def str_from_file(file_path):
     :type file_path: str
     :return: The query from the file as a single line string
     """
-    return None
+    return re.sub(" +", " ",
+                  ' '.join([
+                      re.sub("--.*", "", line.strip())
+                      for line in open(file_path)
+                      if not line.strip().startswith('--') and line.strip()
+                  ]))
