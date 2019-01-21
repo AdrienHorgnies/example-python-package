@@ -1,4 +1,3 @@
-import filecmp
 import os.path
 import tempfile
 from datetime import datetime
@@ -30,33 +29,31 @@ def test_execute(mock_datetime, mock_cp):
     mock_cursor = mock.Mock()
     instance.cursor.return_value = mock_cursor
 
-    mock_cursor.fetchall.return_value = {
-        "headers": ["id", "name"],
-        "rows": [
-            [1, "Adrien"],
-            [2, "Simon"]
-        ]
-    }
+    mock_cursor.fetchall.return_value = [
+        (1, "Adrien"),
+        (2, "Simon")
+    ]
+    mock_cursor.description = [["id"], ["name"]]
 
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as file:
-        file.write("SHOW DATABASES;\n")
+        file.write("SELECT * FROM `person`;\n")
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as expected_file:
-        expected_file.write("SHOW DATABASES;\n"
+        expected_file.write("SELECT * FROM person;\n"
                             "\n"
-                            "-- START TIME: 2019-02-03T14:52:54.452\n"
-                            "-- END TIME: 2019-02-03T14:52:55.502\n"
-                            "-- DURATION: 1.050s\n"
-                            "-- ROWS COUNT: 3\n"
+                            "-- START TIME: 2019-02-03T14:52:54.452000\n"
+                            "-- END TIME: 2019-02-03T14:52:55.502000\n"
+                            "-- DURATION: 0:00:01.050000\n"
+                            "-- ROWS COUNT: 2\n"
                             "-- RESULT FILE: {}\n".format(os.path.splitext(file.name)[0] + ".csv"))
 
     results = query.execute(file.name)
 
     mock_cursor.execute.assert_called_once()
-    assert mock_cursor.execute.call_args == mock.call("SHOW DATABASES;")
+    assert mock_cursor.execute.call_args == mock.call("SELECT * FROM `person`;")
     mock_cursor.fetchall.assert_called_once()
-    assert filecmp.cmp(file, expected_file)
+    print("diff '{}' '{}'".format(file.name, expected_file.name))
+    assert [row for row in open(file.name)] == [row for row in open(expected_file.name)]
     assert results == {
-        "n_rows": 3,
-        "headers": ['name'],
-        "rows": ['information_schema', 'database_a', 'database_b']
+        "headers": ["id", "name"],
+        "rows": mock_cursor.fetchall.return_value
     }
