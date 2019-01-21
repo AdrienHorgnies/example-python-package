@@ -1,7 +1,9 @@
+import getpass
+
 import yaml
 from mysql import connector
 
-import Singleton
+from Singleton import Singleton
 
 
 class CursorProvider(metaclass=Singleton):
@@ -13,7 +15,7 @@ class CursorProvider(metaclass=Singleton):
         self.connection = connector.connect(
             host=config["mysql"]["host"],
             user=config["mysql"]["user"],
-            passwd=""
+            passwd=getpass.getpass()
         )
 
     def __del__(self):
