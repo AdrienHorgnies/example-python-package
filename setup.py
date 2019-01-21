@@ -7,5 +7,5 @@ setup(
     author='Adrien Horgnies',
     author_email='aHorgnies@altissia.org',
     packages=['sql_check'],
-    install_requires=['mysql-connector-python'],
+    install_requires=['mysql-connector-python', 'pyyaml'],
 )

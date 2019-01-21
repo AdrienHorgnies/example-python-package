@@ -1,3 +1,4 @@
+import yaml
 from mysql import connector
 
 import Singleton
@@ -6,9 +7,12 @@ import Singleton
 class CursorProvider(metaclass=Singleton):
 
     def __init__(self):
+        with open("application.yml", "r") as config_file:
+            config = yaml.load(config_file)
+
         self.connection = connector.connect(
-            host="127.0.0.1",
-            user="root",
+            host=config["mysql"]["host"],
+            user=config["mysql"]["user"],
             passwd=""
         )
 
