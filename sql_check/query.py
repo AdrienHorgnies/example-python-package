@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 
 def str_from_file(file_path):
@@ -26,4 +27,7 @@ def execute(file_path):
     :type file_path: str
     :return: the report of the query execution
     """
+    start_time = datetime.now()
+    # todo execute query here and nothing else
+    start_end = datetime.now()
     return None
