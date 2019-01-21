@@ -1,6 +1,8 @@
 import re
 from datetime import datetime
 
+from CursorProvider import CursorProvider
+
 
 def str_from_file(file_path):
     """
@@ -28,7 +30,13 @@ def execute(file_path):
     :return: data queried from the database
     :rtype: {'headers': [str], 'rows': [[any]]}
     """
+
+    cursor = CursorProvider().cursor()
+
+    cursor.execute(str_from_file(file_path))
+
     start_time = datetime.now()
-    # todo execute query here and nothing else
+    cursor.fetchall()
     start_end = datetime.now()
+
     return None
