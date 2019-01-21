@@ -25,7 +25,8 @@ def execute(file_path):
 
     :param file_path: file containing a single SQL query
     :type file_path: str
-    :return: the report of the query execution
+    :return: data queried from the database
+    :rtype: {'headers': [str], 'rows': [[any]]}
     """
     start_time = datetime.now()
     # todo execute query here and nothing else
