@@ -3,6 +3,7 @@ import os.path
 import re
 from datetime import datetime
 
+import prefix
 from CursorProvider import CursorProvider
 
 
@@ -22,33 +23,36 @@ def str_from_file(file_path):
                   ]))
 
 
-def execute(file_path):
+def execute(file_path, directory=None):
     """
-    Execute the query, append a report to the file (start & end time, duration, n rows and result file) and copy results
-    next to the original file with the same file name but the extension being csv.
+    Execute the query, append a report to the file (or his copy) (start & end time, duration, n rows and result file)
+     and write results into a csv with the same name as the working file
 
     :param file_path: file containing a single SQL query
     :type file_path: str
+    :param directory: where to create a copy of the file, prefixed with timestamp. No directory, means no copy.
+    :type directory: str
     :return: data queried from the database
     :rtype: {'headers': list<str>, 'rows': list<tuple<any>>}
     """
+    query_path = prefix.timestamp(file_path, directory) if directory else file_path
 
     cursor = CursorProvider().cursor()
 
     start_time = datetime.now()
-    cursor.execute(str_from_file(file_path))
+    cursor.execute(str_from_file(query_path))
     end_time = datetime.now()
 
     rows = cursor.fetchall()
     headers = [header[0] for header in cursor.description]
 
-    result_path = os.path.splitext(file_path)[0] + ".csv"
+    result_path = os.path.splitext(query_path)[0] + ".csv"
     with open(result_path, "w") as result_file:
         csv_writer = csv.writer(result_file, quoting=csv.QUOTE_ALL)
         csv_writer.writerow(headers)
         [csv_writer.writerow(row) for row in rows]
 
-    with open(file_path, "a+") as file:
+    with open(query_path, "a+") as file:
         file.write("\n"
                    "-- START TIME: {start}\n"
                    "-- END TIME: {end}\n"

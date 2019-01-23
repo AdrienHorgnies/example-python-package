@@ -50,8 +50,6 @@ def test_execute(mock_datetime, mock_cp):
 
     mock_cursor.execute.assert_called_once()
     assert mock_cursor.execute.call_args == mock.call("SELECT * FROM `person`;")
-    mock_cursor.fetchall.assert_called_once()
-    print("diff '{}' '{}'".format(file.name, expected_file.name))
     assert [row for row in open(file.name)] == [row for row in open(expected_file.name)]
     assert results == {
         "headers": ["id", "name"],
