@@ -1,3 +1,6 @@
+monthly_check:
+  source: /home/ahorgnies/sources/sql
+  output: /home/ahorgnies/reports
 mysql:
   host: 127.0.0.1
   user: root
