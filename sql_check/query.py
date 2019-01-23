@@ -30,7 +30,7 @@ def execute(file_path, directory=None):
 
     :param file_path: file containing a single SQL query
     :type file_path: str
-    :param directory: where to create a copy of the file, prefixed with timestamp. No directory, means no copy.
+    :param directory: where to create a copy of the file, prefixed with timestamp. No directory means no copy.
     :type directory: str
     :return: data queried from the database
     :rtype: {'headers': list<str>, 'rows': list<tuple<any>>}
