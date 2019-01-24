@@ -19,4 +19,15 @@ def monthly_check(month=previous(), source=None, output=None):
     :return: the path to the report directory
     :rtype: str | os.PathLike
     """
-    return None
+
+    report_directory = os.path.join(
+        output,
+        month.strftime("%Y-%m-%B")
+    )
+
+    if os.path.exists(report_directory):
+        raise FileExistsError(report_directory)
+
+    os.mkdir(report_directory)
+
+    return report_directory
