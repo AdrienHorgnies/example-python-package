@@ -11,5 +11,5 @@
 
 | query          | count |
 |----------------|------:|
-| show-databases | 4     |
+| show-databases | 22    |
 | select-star    | 0     |
