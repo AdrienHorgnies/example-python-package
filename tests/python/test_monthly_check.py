@@ -14,11 +14,11 @@ def test_monthly_check():
     os.mkdir(output)
 
     try:
-        produced_directory = monthly_check(date(2019, 1, 1), source="test/assets", output=output)
+        produced_directory = monthly_check(date(2019, 1, 1), source="../resources/sql", output=output)
         assert produced_directory == os.path.join(output, "2019-01-January")
         assert os.path.isdir(produced_directory)
         assert os.path.isdir(os.path.join(produced_directory, "select-star"))
-        assert os.path.isdir(os.path.join(produced_directory, "show-databases"))
-        assert os.path.isfile(os.path.join(produced_directory, "2019-01-January.md"))
+        assert os.path.isdir(os.path.join(produced_directory, "show-columns"))
+        assert os.path.isfile(os.path.join(produced_directory, "2019-01-January-report.md"))
     finally:
         shutil.rmtree(output)

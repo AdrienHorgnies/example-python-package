@@ -30,4 +30,18 @@ def monthly_check(month=previous(), source=None, output=None):
 
     os.mkdir(report_directory)
 
+    if not os.path.isdir(source):
+        raise FileNotFoundError(source)
+
+    queries = os.listdir(source)
+    for query in queries:
+        os.mkdir(os.path.join(
+            report_directory,
+            os.path.splitext(query)[0]
+        ))
+
+    with open(os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md"), "w") as report_file:
+        report_file.write("# Monthly Report for {month}\n"
+                          .format(month=month.strftime("%B %Y")))
+
     return report_directory
