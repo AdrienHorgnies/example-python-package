@@ -1,4 +1,3 @@
-from datetime import datetime
 from os.path import join
 
 import mock
@@ -14,12 +13,9 @@ def test_str_from_file(star):
 @mock.patch("query.datetime")
 @mock.patch("query.prefix.datetime")
 def test_execute(mock_prefix_dt, mock_dt, mock_cp, out_dir, show):
-    mock_prefix_dt.now.return_value = datetime(2019, 1, 23, 10, 31, 55)
+    mock_prefix_dt.now.return_value = show["prefix_dt"]
 
-    mock_dt.now.side_effect = [
-        datetime(2019, 1, 23, 10, 31, 55, 1),
-        datetime(2019, 1, 23, 10, 31, 55, 2),
-    ]
+    mock_dt.now.side_effect = show["start_end_dt"]
 
     instance = mock_cp.return_value
     mock_cursor = mock.Mock()
