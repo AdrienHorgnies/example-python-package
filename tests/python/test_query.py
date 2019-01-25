@@ -36,10 +36,9 @@ def test_execute(mock_datetime, mock_cp):
     mock_cursor.description = [["id"], ["name"]]
 
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as file:
-        file.write("SELECT * FROM `person`;\n")
+        file.write("SELECT * FROM `person`;\n\n")
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as expected_file:
-        expected_file.write("SELECT * FROM `person`;\n"
-                            "\n"
+        expected_file.write("SELECT * FROM `person`;\n\n"
                             "-- START TIME: 2019-02-03T14:52:54.452000\n"
                             "-- END TIME: 2019-02-03T14:52:55.502000\n"
                             "-- DURATION: 0:00:01.050000\n"

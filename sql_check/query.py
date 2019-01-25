@@ -54,12 +54,11 @@ def execute(file_path, directory=None):
             [csv_writer.writerow(row) for row in rows]
 
     with open(query_path, "a+") as file:
-        file.write("\n"
-                   "-- START TIME: {start}\n"
+        file.write("-- START TIME: {start}\n"
                    "-- END TIME: {end}\n"
                    "-- DURATION: {duration}\n"
                    "-- ROWS COUNT: {count}\n"
-                   "-- RESULT FILE: {file}\n".format(
+                   "-- RESULT FILE: {file}\n\n".format(
                     start=start_time.isoformat(),
                     end=end_time.isoformat(),
                     duration=end_time - start_time,
