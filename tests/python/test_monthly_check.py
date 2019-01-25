@@ -1,26 +1,9 @@
-import shutil
-import tempfile
 from datetime import date, datetime
-from os import mkdir
 from os.path import join, exists, isfile, isdir
 
 import mock
-import pytest
 
 from monthly_check import monthly_check
-
-
-@pytest.fixture(scope="function")
-def out_dir():
-    output = join(
-        tempfile.gettempdir(),
-        "test-reports"
-    )
-    mkdir(output)
-
-    yield output
-
-    shutil.rmtree(output)
 
 
 @mock.patch("monthly_check.runner.datetime")

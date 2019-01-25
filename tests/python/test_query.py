@@ -1,6 +1,5 @@
-import os.path
-import tempfile
 from datetime import datetime
+from os.path import join
 
 import mock
 
@@ -8,43 +7,34 @@ import query
 
 
 def test_str_from_file(star):
-    assert query.str_from_file(star["in_sql"]) == "SELECT * FROM `some_table`;"
+    assert query.str_from_file(star["src"]) == "SELECT * FROM `some_table`;"
 
 
 @mock.patch("query.CursorProvider")
 @mock.patch("query.datetime")
-def test_execute(mock_datetime, mock_cp):
-    mock_datetime.now.side_effect = [
-        datetime(2019, 2, 3, 14, 52, 54, 452000),
-        datetime(2019, 2, 3, 14, 52, 55, 502000)
+@mock.patch("query.prefix.datetime")
+def test_execute(mock_prefix_dt, mock_dt, mock_cp, out_dir, show):
+    mock_prefix_dt.now.return_value = datetime(2019, 1, 23, 10, 31, 55)
+
+    mock_dt.now.side_effect = [
+        datetime(2019, 1, 23, 10, 31, 55, 1),
+        datetime(2019, 1, 23, 10, 31, 55, 2),
     ]
 
     instance = mock_cp.return_value
     mock_cursor = mock.Mock()
     instance.cursor.return_value = mock_cursor
 
-    mock_cursor.fetchall.return_value = [
-        (1, "Adrien"),
-        (2, "Simon")
-    ]
-    mock_cursor.description = [["id"], ["name"]]
+    mock_cursor.fetchall.return_value = show["rows"]
+    mock_cursor.description = show["description"]
 
-    with tempfile.NamedTemporaryFile(mode='w', delete=False) as file:
-        file.write("SELECT * FROM `person`;\n")
-    with tempfile.NamedTemporaryFile(mode='w', delete=False) as expected_file:
-        expected_file.write("SELECT * FROM `person`;\n\n"
-                            "-- START TIME: 2019-02-03T14:52:54.452000\n"
-                            "-- END TIME: 2019-02-03T14:52:55.502000\n"
-                            "-- DURATION: 0:00:01.050000\n"
-                            "-- ROWS COUNT: 2\n"
-                            "-- RESULT FILE: {}\n".format(os.path.basename(os.path.splitext(file.name)[0] + ".csv")))
-
-    results = query.execute(file.name)
+    results = query.execute(show["src"], directory=out_dir)
 
     mock_cursor.execute.assert_called_once()
-    assert mock_cursor.execute.call_args == mock.call("SELECT * FROM `person`;")
-    assert [row for row in open(file.name)] == [row for row in open(expected_file.name)]
+    assert mock_cursor.execute.call_args == mock.call(show["str"])
+    assert [row for row in open(join(out_dir, show["report_name"]))] == [row for row in open(show["report"])]
+    assert [row for row in open(join(out_dir, show["csv_name"]))] == [row for row in open(show["csv"])]
     assert results == {
-        "headers": ["id", "name"],
-        "rows": mock_cursor.fetchall.return_value
+        "headers": show["description"],
+        "rows": show["rows"]
     }
