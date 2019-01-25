@@ -9,7 +9,7 @@ from monthly_check import monthly_check
 @mock.patch("monthly_check.runner.datetime")
 @mock.patch("monthly_check.runner.prefix.datetime")
 @mock.patch("monthly_check.runner.CursorProvider")
-def test_monthly_check(mock_cp, mock_prefix_dt, mock_dt, out_dir, star, show):
+def test_monthly_check(mock_cp, mock_prefix_dt, mock_dt, out_dir, star, show, report):
     mock_prefix_dt.now.side_effect = [
         show["prefix_dt"],  # show-columns
         star["prefix_dt"],  # select-star
@@ -53,3 +53,6 @@ def test_monthly_check(mock_cp, mock_prefix_dt, mock_dt, out_dir, star, show):
     assert isfile(show_csv)
     assert [row for row in open(show_report)] == [row for row in open(show["report"])]
     assert [row for row in open(show_csv)] == [row for row in open(show["csv"])]
+
+    actual_monthly_report = [row for row in open(join(report_dir, "2019-01-January-report.md"))]
+    assert actual_monthly_report == report

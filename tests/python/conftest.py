@@ -11,6 +11,11 @@ RSRC = join("..", "resources")
 X_REPORT_DIR = join(RSRC, "expected_report", "2019-01-January")
 
 
+@pytest.fixture()
+def report():
+    return [row for row in open(join(X_REPORT_DIR, "2019-01-January-report.md"))]
+
+
 @pytest.fixture(scope="function")
 def out_dir():
     output = join(
