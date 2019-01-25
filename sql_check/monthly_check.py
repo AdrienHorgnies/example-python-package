@@ -1,4 +1,6 @@
 import os
+from datetime import datetime
+from getpass import getuser
 
 import query as runner
 from month import previous
@@ -35,14 +37,27 @@ def monthly_check(month=previous(), source=None, output=None):
         raise FileNotFoundError(source)
 
     queries = os.listdir(source)
+    results = []
+    positives = []
     for query in queries:
         query_src = os.path.join(source, query)
         query_dir = os.path.join(report_directory, os.path.splitext(query)[0])
         os.mkdir(query_dir)
-        runner.execute(query_src, query_dir)
+        result = runner.execute(query_src, query_dir)
+        results.append(result)
+        if result["rows"]:
+            positives.append(query)
 
     with open(os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md"), "w") as report_file:
         report_file.write("# Monthly Report for {month}\n"
-                          .format(month=month.strftime("%B %Y")))
+                          "\n"
+                          "- produced at: {date}\n"
+                          "- produced by: {user}\n"
+                          "- result: {result}\n"
+                          .format(
+                            month=month.strftime("%B %Y"),
+                            date=datetime.today().replace(microsecond=0).isoformat(),
+                            user=getuser(),
+                            result="positive" if positives else "negative"))
 
     return report_directory
