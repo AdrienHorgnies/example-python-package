@@ -7,14 +7,8 @@ import mock
 import query
 
 
-def test_str_from_file():
-    with tempfile.NamedTemporaryFile(mode='w', delete=False) as file:
-        file.write("-- A comment followed by a blank line\n"
-                   "\n"
-                   "SELECT 'this is a test' -- inline comment\n"
-                   "WHERE 1;\n"
-                   "\n")
-    assert query.str_from_file(file.name) == "SELECT 'this is a test' WHERE 1;"
+def test_str_from_file(star):
+    assert query.str_from_file(star["in_sql"]) == "SELECT * FROM `some_table`;"
 
 
 @mock.patch("query.CursorProvider")

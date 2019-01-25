@@ -3,7 +3,8 @@ from os.path import join
 
 import pytest
 
-X_REPORT_DIR = join("..", "resources", "expected_montly_check", "2019-01-January")
+RSRC = join("..", "resources")
+X_REPORT_DIR = join(RSRC, "expected_monthly_check", "2019-01-January")
 TMP_STAR = "2019-01-23T10-31-54_select-star"
 TMP_SHOW = "2019-01-23T10-31-55_show-columns"
 
@@ -11,7 +12,7 @@ TMP_SHOW = "2019-01-23T10-31-55_show-columns"
 @pytest.fixture()
 def star():
     return {
-        "in_sql": join("..", "sql", "select-star.sql"),
+        "in_sql": join(RSRC, "sql", "select-star.sql"),
         "out_sql": join(X_REPORT_DIR, "select-star", TMP_STAR + ".sql"),
         "rows": [],
         "description": []
