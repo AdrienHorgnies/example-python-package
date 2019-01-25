@@ -1,4 +1,3 @@
-import csv
 import shutil
 import tempfile
 from datetime import date, datetime
@@ -9,10 +8,6 @@ import mock
 import pytest
 
 from monthly_check import monthly_check
-
-X_REPORT_DIR = "../resources/expected_monthly_check_report/2019-01-January"
-STAR = "2019-01-23T10-31-54_select-star"
-SHOW = "2019-01-23T10-31-55_show-columns"
 
 
 @pytest.fixture(scope="function")
@@ -26,27 +21,6 @@ def out_dir():
     yield output
 
     shutil.rmtree(output)
-
-
-@pytest.fixture(scope="module")
-def expected():
-    show_csv = join(X_REPORT_DIR, "show-columns", SHOW + ".csv")
-
-    with open(show_csv) as show_csv_file:
-        reader = csv.reader(show_csv_file)
-        csv_content = list(reader)
-        show_result = csv_content[1:]
-        show_description = csv_content[:1]
-
-    return {
-        "star_sql": join(X_REPORT_DIR, "select-star", STAR + ".sql"),
-        "star_result": [],
-        "star_description": [],
-        "show_sql": join(X_REPORT_DIR, "show-columns", SHOW + ".sql"),
-        "show_csv": show_csv,
-        "show_result": show_result,
-        "show_description": show_description,
-    }
 
 
 @mock.patch("monthly_check.runner.datetime")
