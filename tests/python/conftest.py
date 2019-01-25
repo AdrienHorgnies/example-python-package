@@ -1,5 +1,6 @@
 import csv
 import tempfile
+from datetime import datetime
 from os import mkdir
 from os.path import join
 from shutil import rmtree
@@ -29,9 +30,15 @@ def star():
         "src": join(RSRC, "sql", "select-star.sql"),
         "report": join(X_REPORT_DIR, "select-star", "2019-01-23T10-31-54_select-star.sql"),
         "report_name": "2019-01-23T10-31-54_select-star.sql",
+        "csv_name": "2019-01-23T10-31-54_select-star.csv",
         "str": "SELECT * FROM `some_table`;",
         "rows": [],
-        "description": []
+        "description": [],
+        "prefix_dt": datetime(2019, 1, 23, 10, 31, 54),
+        "start_end_dt": [
+            datetime(2019, 1, 23, 10, 31, 54, 450265),
+            datetime(2019, 1, 23, 10, 31, 54, 999999)
+        ]
     }
 
 
@@ -59,5 +66,10 @@ def show():
         "csv_name": "2019-01-23T10-31-55_show-columns.csv",
         "rows": rows,
         "description": description,
-        "headers": headers
+        "headers": headers,
+        "prefix_dt": datetime(2019, 1, 23, 10, 31, 55),
+        "start_end_dt": [
+            datetime(2019, 1, 23, 10, 31, 55, 1),
+            datetime(2019, 1, 23, 10, 31, 55, 2)
+        ]
     }

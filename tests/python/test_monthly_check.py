@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 from os.path import join, exists, isfile, isdir
 
 import mock
@@ -9,28 +9,23 @@ from monthly_check import monthly_check
 @mock.patch("monthly_check.runner.datetime")
 @mock.patch("monthly_check.runner.prefix.datetime")
 @mock.patch("monthly_check.runner.CursorProvider")
-def test_monthly_check(mock_cp, mock_prefix_dt, mock_dt, out_dir, expected):
+def test_monthly_check(mock_cp, mock_prefix_dt, mock_dt, out_dir, star, show):
     mock_prefix_dt.now.side_effect = [
-        datetime(2019, 1, 23, 10, 31, 55),  # show-columns
-        datetime(2019, 1, 23, 10, 31, 54),  # select-star
+        show["prefix_dt"],  # show-columns
+        star["prefix_dt"],  # select-star
     ]
 
-    mock_dt.now.side_effect = [
-        datetime(2019, 1, 23, 10, 31, 55, 1),  # show-columns
-        datetime(2019, 1, 23, 10, 31, 55, 2),  # show-columns
-        datetime(2019, 1, 23, 10, 31, 54, 450265),  # select-star
-        datetime(2019, 1, 23, 10, 31, 54, 999999),  # select-star
-    ]
+    mock_dt.now.side_effect = show["start_end_dt"] + star["start_end_dt"]
 
     instance = mock_cp.return_value
 
     mock_cursor_show = mock.Mock()
-    mock_cursor_show.fetchall.return_value = expected["show_result"]
-    mock_cursor_show.description = expected["show_description"]
+    mock_cursor_show.fetchall.return_value = show["rows"]
+    mock_cursor_show.description = show["description"]
 
     mock_cursor_star = mock.Mock()
-    mock_cursor_star.fetchall.return_value = expected["star_result"]
-    mock_cursor_star.description = expected["star_description"]
+    mock_cursor_star.fetchall.return_value = star["rows"]
+    mock_cursor_star.description = star["description"]
 
     instance.cursor.side_effect = [
         mock_cursor_show,
@@ -46,15 +41,15 @@ def test_monthly_check(mock_cp, mock_prefix_dt, mock_dt, out_dir, expected):
     assert isdir(join(report_dir, "show-columns"))
     assert isfile(join(report_dir, "2019-01-January-report.md"))
 
-    star_query = join(report_dir, "select-star/2019-01-23T10-31-54_select-star.sql")
-    star_csv = join(report_dir, "select-star/2019-01-23T10-31-54_select-star.csv")
-    assert isfile(star_query)
+    star_report = join(report_dir, "select-star", star["report_name"])
+    star_csv = join(report_dir, "select-star", star["csv_name"])
+    assert isfile(star_report)
     assert not exists(star_csv)
-    assert [row for row in open(star_query)] == [row for row in open(expected["star_sql"])]
+    assert [row for row in open(star_report)] == [row for row in open(star["report"])]
 
-    show_query = join(report_dir, "show-columns/2019-01-23T10-31-55_show-columns.sql")
-    show_csv = join(report_dir, "show-columns/2019-01-23T10-31-55_show-columns.csv")
-    assert isfile(show_query)
+    show_report = join(report_dir, "show-columns", show["report_name"])
+    show_csv = join(report_dir, "show-columns", show["csv_name"])
+    assert isfile(show_report)
     assert isfile(show_csv)
-    assert [row for row in open(show_query)] == [row for row in open(expected["show_sql"])]
-    assert [row for row in open(show_csv)] == [row for row in open(expected["show_csv"])]
+    assert [row for row in open(show_report)] == [row for row in open(show["report"])]
+    assert [row for row in open(show_csv)] == [row for row in open(show["csv"])]
