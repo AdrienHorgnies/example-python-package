@@ -49,12 +49,20 @@ def expected():
     }
 
 
+@mock.patch("monthly_check.runner.datetime")
 @mock.patch("monthly_check.runner.prefix.datetime")
 @mock.patch("monthly_check.runner.CursorProvider")
-def test_monthly_check(mock_cp, mock_prefix_dt, out_dir, expected):
+def test_monthly_check(mock_cp, mock_prefix_dt, mock_dt, out_dir, expected):
     mock_prefix_dt.now.side_effect = [
         datetime(2019, 1, 23, 10, 31, 55),  # show-columns
         datetime(2019, 1, 23, 10, 31, 54),  # select-star
+    ]
+
+    mock_dt.now.side_effect = [
+        datetime(2019, 1, 23, 10, 31, 55, 1),  # show-columns
+        datetime(2019, 1, 23, 10, 31, 55, 2),  # show-columns
+        datetime(2019, 1, 23, 10, 31, 54, 450265),  # select-star
+        datetime(2019, 1, 23, 10, 31, 54, 999999),  # select-star
     ]
 
     instance = mock_cp.return_value
