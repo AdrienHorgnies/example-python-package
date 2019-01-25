@@ -22,7 +22,7 @@ class CursorProvider(metaclass=Singleton):
         )
 
     def __del__(self):
-        if self.connection.is_connected():
+        if self.connection and self.connection.is_connected():
             self.connection.close()
 
     def cursor(self):
