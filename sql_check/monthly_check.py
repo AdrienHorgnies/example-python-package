@@ -1,5 +1,6 @@
 import os
 
+import query as runner
 from month import previous
 
 
@@ -35,10 +36,10 @@ def monthly_check(month=previous(), source=None, output=None):
 
     queries = os.listdir(source)
     for query in queries:
-        os.mkdir(os.path.join(
-            report_directory,
-            os.path.splitext(query)[0]
-        ))
+        query_src = os.path.join(source, query)
+        query_dir = os.path.join(report_directory, os.path.splitext(query)[0])
+        os.mkdir(query_dir)
+        runner.execute(query_src, query_dir)
 
     with open(os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md"), "w") as report_file:
         report_file.write("# Monthly Report for {month}\n"
