@@ -26,7 +26,7 @@ def str_from_file(file_path):
 def execute(file_path, directory=None):
     """
     Execute the query, append a report to the file (or his copy) (start & end time, duration, n rows and result file)
-     and write results into a csv with the same name as the working file
+     and write results into a csv, if any, with the same name as the working file
 
     :param file_path: file containing a single SQL query
     :type file_path: str
@@ -46,11 +46,13 @@ def execute(file_path, directory=None):
     rows = cursor.fetchall()
     headers = [header[0] for header in cursor.description]
 
-    result_path = os.path.splitext(query_path)[0] + ".csv"
-    with open(result_path, "w") as result_file:
-        csv_writer = csv.writer(result_file, quoting=csv.QUOTE_ALL)
-        csv_writer.writerow(headers)
-        [csv_writer.writerow(row) for row in rows]
+    if rows:
+        result_path = os.path.splitext(query_path)[0] + ".csv"
+
+        with open(result_path, "w") as result_file:
+            csv_writer = csv.writer(result_file, quoting=csv.QUOTE_ALL)
+            csv_writer.writerow(headers)
+            [csv_writer.writerow(row) for row in rows]
 
     with open(query_path, "a+") as file:
         file.write("\n"
@@ -59,12 +61,12 @@ def execute(file_path, directory=None):
                    "-- DURATION: {duration}\n"
                    "-- ROWS COUNT: {count}\n"
                    "-- RESULT FILE: {file}\n".format(
-            start=start_time.isoformat(),
-            end=end_time.isoformat(),
-            duration=end_time - start_time,
-            count=len(rows),
-            file=result_path if len(rows) > 0 else "N/A"
-        ))
+                    start=start_time.isoformat(),
+                    end=end_time.isoformat(),
+                    duration=end_time - start_time,
+                    count=len(rows),
+                    file=result_path if rows else "N/A"
+                    ))
 
     return {
         "headers": headers,
