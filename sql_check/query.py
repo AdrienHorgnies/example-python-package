@@ -59,7 +59,7 @@ def execute(file_path, directory=None):
                    "-- END TIME: {end}\n"
                    "-- DURATION: {duration}\n"
                    "-- ROWS COUNT: {count}\n"
-                   "-- RESULT FILE: {file}\n\n".format(
+                   "-- RESULT FILE: {file}\n".format(
                     start=start_time.isoformat(),
                     end=end_time.isoformat(),
                     duration=end_time - start_time,
