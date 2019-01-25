@@ -8,7 +8,7 @@ from shutil import rmtree
 import pytest
 
 RSRC = join("..", "resources")
-X_REPORT_DIR = join(RSRC, "expected_monthly_check_report", "2019-01-January")
+X_REPORT_DIR = join(RSRC, "expected_report", "2019-01-January")
 
 
 @pytest.fixture(scope="function")
