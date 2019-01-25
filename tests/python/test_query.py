@@ -35,6 +35,6 @@ def test_execute(mock_prefix_dt, mock_dt, mock_cp, out_dir, show):
     assert [row for row in open(join(out_dir, show["report_name"]))] == [row for row in open(show["report"])]
     assert [row for row in open(join(out_dir, show["csv_name"]))] == [row for row in open(show["csv"])]
     assert results == {
-        "headers": show["description"],
+        "headers": show["headers"],
         "rows": show["rows"]
     }
