@@ -43,7 +43,7 @@ def show():
         reader = csv.reader(show_csv_file)
         csv_content = list(reader)
         rows = csv_content[1:]
-        description = csv_content[:1]
+        description = [(header,) for header in csv_content[:1][0]]
 
     return {
         "src": join(RSRC, "sql", "show-columns.sql"),
