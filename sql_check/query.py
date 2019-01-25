@@ -45,10 +45,9 @@ def execute(file_path, directory=None):
 
     rows = cursor.fetchall()
     headers = [header[0] for header in cursor.description]
+    result_path = os.path.splitext(query_path)[0] + ".csv"
 
     if rows:
-        result_path = os.path.splitext(query_path)[0] + ".csv"
-
         with open(result_path, "w") as result_file:
             csv_writer = csv.writer(result_file, quoting=csv.QUOTE_ALL)
             csv_writer.writerow(headers)
