@@ -64,7 +64,7 @@ def execute(file_path, directory=None):
                     end=end_time.isoformat(),
                     duration=end_time - start_time,
                     count=len(rows),
-                    file=result_path if rows else "N/A"
+                    file=os.path.basename(result_path) if rows else "N/A"
                     ))
 
     return {
