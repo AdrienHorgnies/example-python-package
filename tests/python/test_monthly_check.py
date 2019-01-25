@@ -91,8 +91,8 @@ def test_monthly_check(mock_cp, mock_prefix_dt, mock_dt, out_dir, expected):
 
     star_query = join(report_dir, "select-star/2019-01-23T10-31-54_select-star.sql")
     star_csv = join(report_dir, "select-star/2019-01-23T10-31-54_select-star.csv")
-    assert not exists(star_csv)
     assert isfile(star_query)
+    assert not exists(star_csv)
     assert [row for row in open(star_query)] == [row for row in open(expected["star_sql"])]
 
     show_query = join(report_dir, "show-columns/2019-01-23T10-31-55_show-columns.sql")
