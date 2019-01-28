@@ -36,28 +36,32 @@ def monthly_check(month=previous(), source=None, output=None):
     if not os.path.isdir(source):
         raise FileNotFoundError(source)
 
-    queries = os.listdir(source)
     results = []
     positives = []
-    for query in queries:
+    for query in os.listdir(source):
         query_src = os.path.join(source, query)
-        query_dir = os.path.join(report_directory, os.path.splitext(query)[0])
+        query_name = os.path.splitext(query)[0]
+        query_dir = os.path.join(report_directory, query_name)
         os.mkdir(query_dir)
+
         result = runner.execute(query_src, query_dir)
         results.append(result)
         if result["rows"]:
-            positives.append(query)
+            positives.append(query_name)
+
+    opening = "# Monthly Report for {month}\n" \
+              "\n"\
+              "- produced at: {date}\n"\
+              "- produced by: {user}\n"\
+              "- result: {result}\n".format(
+                month=month.strftime("%B %Y"),
+                date=datetime.today().replace(microsecond=0).isoformat(),
+                user=getuser(),
+                result="positive" if positives else "negative")
+
+    brief = "## Positive Queries:\n" + "".join(["- {}\n".format(query) for query in positives])
 
     with open(os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md"), "w") as report_file:
-        report_file.write("# Monthly Report for {month}\n"
-                          "\n"
-                          "- produced at: {date}\n"
-                          "- produced by: {user}\n"
-                          "- result: {result}\n"
-                          .format(
-                            month=month.strftime("%B %Y"),
-                            date=datetime.today().replace(microsecond=0).isoformat(),
-                            user=getuser(),
-                            result="positive" if positives else "negative"))
+        report_file.write(opening + "\n" + brief)
 
     return report_directory

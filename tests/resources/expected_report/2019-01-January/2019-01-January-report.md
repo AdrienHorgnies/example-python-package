@@ -4,12 +4,12 @@
 - produced by: aho
 - result: positive
 
-## positive queries:
-- show-databases
+## Positive Queries:
+- show-columns
 
 ## summary
 
-| query          | count |
-|----------------|------:|
-| show-databases | 22    |
-| select-star    | 0     |
+| query        | count |
+|--------------|------:|
+| show-columns | 22    |
+| select-star  | 0     |
