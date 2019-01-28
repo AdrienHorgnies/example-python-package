@@ -33,7 +33,7 @@ def execute(file_path, directory=None):
     :param directory: where to create a copy of the file, prefixed with timestamp. No directory means no copy.
     :type directory: str
     :return: data queried from the database
-    :rtype: {'headers': list<str>, 'rows': list<tuple<any>>}
+    :rtype: {'name': str,'headers': list<str>, 'rows': list<tuple<any>>}
     """
     query_path = prefix.timestamp(file_path, directory) if directory else file_path
 
@@ -68,6 +68,7 @@ def execute(file_path, directory=None):
                     ))
 
     return {
+        "name": os.path.basename(os.path.splitext(file_path)[0]),
         "headers": headers,
         "rows": rows
     }
