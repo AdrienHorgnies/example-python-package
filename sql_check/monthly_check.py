@@ -1,12 +1,16 @@
+#!/usr/bin/env python3
+import argparse
 import os
 from datetime import datetime
 from getpass import getuser
 
+import yaml
+
+import month as month_date
 import query as runner
-from month import previous
 
 
-def monthly_check(month=previous(), source=None, output=None):
+def monthly_check(month=None, source=None, output=None):
     """
     Create a sub directory inside the output directory named after the month (YYYY-mm)
     Inside this directory, create a sub directory for each query from the source directory
@@ -28,13 +32,13 @@ def monthly_check(month=previous(), source=None, output=None):
         month.strftime("%Y-%m-%B")
     )
 
+    if not os.path.isdir(source):
+        raise FileNotFoundError(source)
+
     if os.path.exists(report_directory):
         raise FileExistsError(report_directory)
 
     os.mkdir(report_directory)
-
-    if not os.path.isdir(source):
-        raise FileNotFoundError(source)
 
     results = []
     for query in os.listdir(source):
@@ -96,3 +100,25 @@ def write_report(month, results, report_directory):
 
     with open(os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md"), "w") as report_file:
         report_file.write(opening + "\n" + brief + "\n" + summary)
+
+
+if __name__ == "__main__":
+    with open("application.yml", "r") as config_file:
+        config = yaml.load(config_file)
+
+    desc = "Runs all SQL statements from source directory, " \
+           "writes results and reports in the output directory" \
+           " in a sub directory corresponding to the month"
+    parser = argparse.ArgumentParser(description=desc)
+
+    parser.add_argument('-s', '--source', default=config["monthly_check"]["source"],
+                        help="directory where to find SQL SELECT statements,"
+                             " one single statement per file. Can be configured with monthly_check.source")
+    parser.add_argument('-o', '--output', default=config["monthly_check"]["output"],
+                        help="Where to write the report. Can be configured with monthly_check.output.")
+    parser.add_argument('-m', '--month', default=month_date.previous(), type=month_date.from_str,
+                        help="6 digits, 4 for the year then 2 for the month (ex.: 201901 is Jan 2019)")
+
+    args = parser.parse_args()
+
+    monthly_check(args.month, args.source, args.output)
