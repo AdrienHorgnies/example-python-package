@@ -61,7 +61,26 @@ def monthly_check(month=previous(), source=None, output=None):
     positives = "".join(["- {}\n".format(query["name"]) for query in positives])
     brief = "## Positive Queries\n" + positives
 
+    names = [query["name"] for query in results]
+    counts = [len(query["rows"]) for query in results]
+    name_pad_size = max(len(max(names, key=len)), len("query"))
+    count_pad_size = max(len(str(max(counts))), len("count"))
+
+    table_header = "| {query} | {count} |\n".format(
+        query="query".ljust(name_pad_size, " "),
+        count="count".rjust(count_pad_size, " "))
+    table_def = "|-{query}-|-{count}:|\n".format(
+        query="-" * name_pad_size,
+        count="-" * count_pad_size)
+    table_body = "".join([
+        "| {query} | {count} |\n".format(
+            query=query["name"].ljust(name_pad_size, " "),
+            count=str(len(query["rows"])).rjust(count_pad_size, " "))
+        for query in results])
+
+    summary = "## Summary\n" + table_header + table_def + table_body
+
     with open(os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md"), "w") as report_file:
-        report_file.write(opening + "\n" + brief)
+        report_file.write(opening + "\n" + brief + "\n" + summary)
 
     return report_directory

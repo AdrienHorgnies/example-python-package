@@ -10,5 +10,5 @@
 ## Summary
 | query        | count |
 |--------------|------:|
-| show-columns | 22    |
-| select-star  | 0     |
+| show-columns |    22 |
+| select-star  |     0 |
