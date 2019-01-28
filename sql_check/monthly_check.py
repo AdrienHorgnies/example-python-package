@@ -46,20 +46,34 @@ def monthly_check(month=previous(), source=None, output=None):
         result = runner.execute(query_src, query_dir)
         results.append(result)
 
-    positives = [query for query in results if query["rows"]]
+    write_report(month, results, report_directory)
 
+    return report_directory
+
+
+def write_report(month, results, report_directory):
+    """
+    Write a report crunching the results in a nice markdown readable format
+
+    :param month: period the report is about
+    :type month: date
+    :param results: list queries's results
+    :type results: {'name': str,'headers': list<str>, 'rows': list<tuple<any>>}
+    :param report_directory: where the report must be written
+    :type report_directory: str
+    """
+    positives = [query for query in results if query["rows"]]
     opening = "# Monthly Report for {month}\n" \
-              "\n"\
-              "- produced at: {date}\n"\
-              "- produced by: {user}\n"\
+              "\n" \
+              "- produced at: {date}\n" \
+              "- produced by: {user}\n" \
               "- result: {result}\n".format(
                 month=month.strftime("%B %Y"),
                 date=datetime.today().replace(microsecond=0).isoformat(),
                 user=getuser(),
                 result="positive" if positives else "negative")
 
-    positives = "".join(["- {}\n".format(query["name"]) for query in positives])
-    brief = "## Positive Queries\n" + positives
+    brief = "## Positive Queries\n" + "".join(["- {}\n".format(query["name"]) for query in positives])
 
     names = [query["name"] for query in results]
     counts = [len(query["rows"]) for query in results]
@@ -82,5 +96,3 @@ def monthly_check(month=previous(), source=None, output=None):
 
     with open(os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md"), "w") as report_file:
         report_file.write(opening + "\n" + brief + "\n" + summary)
-
-    return report_directory
