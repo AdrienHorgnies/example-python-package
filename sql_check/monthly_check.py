@@ -60,7 +60,7 @@ def write_report(month, results, report_directory):
     :param results: list queries's results
     :type results: {'name': str,'headers': list<str>, 'rows': list<tuple<any>>}
     :param report_directory: where the report must be written
-    :type report_directory: str
+    :type report_directory: str | os.PathLike
     """
     positives = [query for query in results if query["rows"]]
     opening = "# Monthly Report for {month}\n" \
