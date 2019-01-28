@@ -37,7 +37,6 @@ def monthly_check(month=previous(), source=None, output=None):
         raise FileNotFoundError(source)
 
     results = []
-    positives = []
     for query in os.listdir(source):
         query_src = os.path.join(source, query)
         query_name = os.path.splitext(query)[0]
@@ -46,8 +45,8 @@ def monthly_check(month=previous(), source=None, output=None):
 
         result = runner.execute(query_src, query_dir)
         results.append(result)
-        if result["rows"]:
-            positives.append(query_name)
+
+    positives = [query for query in results if query["rows"]]
 
     opening = "# Monthly Report for {month}\n" \
               "\n"\
@@ -59,7 +58,8 @@ def monthly_check(month=previous(), source=None, output=None):
                 user=getuser(),
                 result="positive" if positives else "negative")
 
-    brief = "## Positive Queries:\n" + "".join(["- {}\n".format(query) for query in positives])
+    positives = "".join(["- {}\n".format(query["name"]) for query in positives])
+    brief = "## Positive Queries\n" + positives
 
     with open(os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md"), "w") as report_file:
         report_file.write(opening + "\n" + brief)

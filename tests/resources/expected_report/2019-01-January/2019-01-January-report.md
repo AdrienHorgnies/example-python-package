@@ -4,11 +4,10 @@
 - produced by: aho
 - result: positive
 
-## Positive Queries:
+## Positive Queries
 - show-columns
 
-## summary
-
+## Summary
 | query        | count |
 |--------------|------:|
 | show-columns | 22    |
