@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+import argparse
 import csv
 import os.path
 import re
@@ -72,3 +74,15 @@ def execute(file_path, directory=None):
         "headers": headers,
         "rows": rows
     }
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Runs a SQL SELECT statement, append a report to the file "
+                                                 "and export results, if any, to a csv file")
+
+    parser.add_argument('file_path', help="A file containing a single SELECT statement")
+    parser.add_argument('-d', '--directory', help="Where to create a timestamp prefixed copy  of the input file"
+                                                  " and operate on it rather than the original")
+
+    args = parser.parse_args()
+    execute(args.file_path, args.directory)
