@@ -4,3 +4,6 @@ monthly_check:
 mysql:
   host: 127.0.0.1
   user: root
+logging:
+  level: DEBUG
+  format: '%(asctime)s %(name)s:%(lineno)d %(levelname)s %(message)s'

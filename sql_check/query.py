@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 import argparse
 import csv
+import logging
 import os.path
 import re
 from datetime import datetime
 
+import yaml
+
 import prefix
 from CursorProvider import CursorProvider
+
+log = logging.getLogger(__name__)
 
 
 def str_from_file(file_path):
@@ -85,4 +90,10 @@ if __name__ == "__main__":
                                                   " and operate on it rather than the original")
 
     args = parser.parse_args()
+
+    with open("application.yml", "r") as config_file:
+        config = yaml.load(config_file)
+
+    logging.basicConfig(level=config["logging"]["level"], format=config["logging"]["format"])
+
     execute(args.file_path, args.directory)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import logging
 import os
 from datetime import datetime
 from getpass import getuser
@@ -120,5 +121,7 @@ if __name__ == "__main__":
                         help="6 digits, 4 for the year then 2 for the month (ex.: 201901 is Jan 2019)")
 
     args = parser.parse_args()
+
+    logging.basicConfig(level=config["logging"]["level"], format=config["logging"]["format"])
 
     monthly_check(args.month, args.source, args.output)
