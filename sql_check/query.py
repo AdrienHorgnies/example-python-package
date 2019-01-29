@@ -42,7 +42,7 @@ def execute(file_path, directory=None):
     :return: data queried from the database
     :rtype: {'name': str,'headers': list<str>, 'rows': list<tuple<any>>}
     """
-    log.info("ENTER execute('{}', '{}')".format(file_path, directory))
+    log.info("ENTER execute({}, {})".format(file_path, directory))
     query_path = prefix.timestamp(file_path, directory) if directory else file_path
 
     cursor = CursorProvider().cursor()
@@ -83,7 +83,7 @@ def execute(file_path, directory=None):
                     file=os.path.basename(result_path) if rows else "N/A"
                     ))
 
-    log.info("EXIT execute('{}', '{}')".format(file_path, directory))
+    log.info("EXIT execute({}, {})".format(file_path, directory))
     return {
         "name": os.path.basename(os.path.splitext(file_path)[0]),
         "headers": headers,

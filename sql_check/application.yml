@@ -1,6 +1,6 @@
 monthly_check:
-  source: /home/ahorgnies/sources/sql
-  output: /home/ahorgnies/reports
+  source: null
+  output: null
 mysql:
   host: 127.0.0.1
   user: root

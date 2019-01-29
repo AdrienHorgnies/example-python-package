@@ -10,8 +10,10 @@ import yaml
 import month as month_date
 import query as runner
 
+log = logging.getLogger(__name__)
 
-def monthly_check(month=None, source=None, output=None):
+
+def monthly_check(month, source, output):
     """
     Create a sub directory inside the output directory named after the month (YYYY-mm)
     Inside this directory, create a sub directory for each query from the source directory
@@ -20,13 +22,14 @@ def monthly_check(month=None, source=None, output=None):
 
     :param month: we are running the check for
     :type month: Date
-    :param source: a directory containing sql files, each containing a single SELECT statement, can configured from yml
+    :param source: a directory containing sql files, each containing a single SELECT statement
     :type source: str | os.PathLike
-    :param output: a directory where to write results and reports, can configured from yml
+    :param output: a directory where to write results and reports
     :type output: str | os.PathLike
     :return: the path to the report directory
     :rtype: str | os.PathLike
     """
+    log.info("ENTER monthly_check(month={}, source={}, output={})".format(month, source, output))
 
     report_directory = os.path.join(
         output,
@@ -39,6 +42,7 @@ def monthly_check(month=None, source=None, output=None):
     if os.path.exists(report_directory):
         raise FileExistsError(report_directory)
 
+    log.info("Creating report directory at {}".format(report_directory))
     os.mkdir(report_directory)
 
     results = []
@@ -46,6 +50,7 @@ def monthly_check(month=None, source=None, output=None):
         query_src = os.path.join(source, query)
         query_name = os.path.splitext(query)[0]
         query_dir = os.path.join(report_directory, query_name)
+        log.info("Creating query report directory at {}".format(query_dir))
         os.mkdir(query_dir)
 
         result = runner.execute(query_src, query_dir)
@@ -53,6 +58,7 @@ def monthly_check(month=None, source=None, output=None):
 
     write_report(month, results, report_directory)
 
+    log.info("EXIT monthly_check(month={}, source={}, output={})".format(month, source, output))
     return report_directory
 
 
@@ -67,6 +73,8 @@ def write_report(month, results, report_directory):
     :param report_directory: where the report must be written
     :type report_directory: str | os.PathLike
     """
+    log.info("ENTER write_report({}, {}, {})".format(month, results, report_directory))
+
     positives = [query for query in results if query["rows"]]
     opening = "# Monthly Report for {month}\n" \
               "\n" \
@@ -99,8 +107,13 @@ def write_report(month, results, report_directory):
 
     summary = "## Summary\n" + table_header + table_def + table_body
 
-    with open(os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md"), "w") as report_file:
+    report_path = os.path.join(report_directory, month.strftime("%Y-%m-%B") + "-report.md")
+
+    log.info("Writing monthly report at {}".format(report_path))
+    with open(report_path, "w") as report_file:
         report_file.write(opening + "\n" + brief + "\n" + summary)
+
+    log.info("EXIT write_report({}, {}, {})".format(month, results, report_directory))
 
 
 if __name__ == "__main__":
@@ -123,5 +136,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     logging.basicConfig(level=config["logging"]["level"], format=config["logging"]["format"])
+
+    if not args.source:
+        log.critical("source must be specified through option -s, --source or configuration monthly_check.source")
+        exit(1)
+    if not args.output:
+        log.critical("output must be specified through option -o, --output or configuration monthly_check.output")
+        exit(2)
 
     monthly_check(args.month, args.source, args.output)
