@@ -30,7 +30,7 @@ def monthly_check(month, source, output):
     :return: the path to the report directory
     :rtype: str | os.PathLike
     """
-    log.info("ENTER monthly_check(month={}, source={}, output={})".format(month, source, output))
+    log.debug("ENTER monthly_check(month={}, source={}, output={})".format(month, source, output))
 
     report_directory = os.path.join(
         output,
@@ -63,7 +63,7 @@ def monthly_check(month, source, output):
 
     write_report(month, results, report_directory)
 
-    log.info("EXIT monthly_check(month={}, source={}, output={})".format(month, source, output))
+    log.debug("EXIT monthly_check(month={}, month={}, month={})".format(month, source, output))
     return report_directory
 
 
@@ -78,7 +78,7 @@ def write_report(month, results, report_directory):
     :param report_directory: where the report must be written
     :type report_directory: str | os.PathLike
     """
-    log.info("ENTER write_report({}, {}, {})".format(month, results, report_directory))
+    log.debug("ENTER write_report({}, {}, {})".format(month, results, report_directory))
 
     positives = [query for query in results if query["rows"]]
     opening = "# Monthly Report for {month}\n" \
@@ -118,7 +118,7 @@ def write_report(month, results, report_directory):
     with open(report_path, "w") as report_file:
         report_file.write(opening + "\n" + brief + "\n" + summary)
 
-    log.info("EXIT write_report({}, {}, {})".format(month, results, report_directory))
+    log.debug("EXIT write_report({}, {}, {})".format(month, results, report_directory))
 
 
 if __name__ == "__main__":
