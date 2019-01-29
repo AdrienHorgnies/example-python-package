@@ -42,24 +42,33 @@ def execute(file_path, directory=None):
     :return: data queried from the database
     :rtype: {'name': str,'headers': list<str>, 'rows': list<tuple<any>>}
     """
+    log.info("ENTER execute('{}', '{}')".format(file_path, directory))
     query_path = prefix.timestamp(file_path, directory) if directory else file_path
 
     cursor = CursorProvider().cursor()
 
+    query = str_from_file(query_path)
+
+    log.debug("Executing query: {}".format(query))
     start_time = datetime.now()
-    cursor.execute(str_from_file(query_path))
+    cursor.execute(query)
     end_time = datetime.now()
+    log.debug("Done executing query")
 
     rows = cursor.fetchall()
+    log.debug("  With results: {}".format(rows))
+
     headers = [header[0] for header in cursor.description]
     result_path = os.path.splitext(query_path)[0] + ".csv"
 
     if rows:
+        log.info("Writes results to {}".format(result_path))
         with open(result_path, "w") as result_file:
             csv_writer = csv.writer(result_file, quoting=csv.QUOTE_ALL)
             csv_writer.writerow(headers)
             [csv_writer.writerow(row) for row in rows]
 
+    log.info("Append results to {}".format(query_path))
     with open(query_path, "a+") as file:
         file.write("\n"
                    "-- START TIME: {start}\n"
@@ -74,6 +83,7 @@ def execute(file_path, directory=None):
                     file=os.path.basename(result_path) if rows else "N/A"
                     ))
 
+    log.info("EXIT execute('{}', '{}')".format(file_path, directory))
     return {
         "name": os.path.basename(os.path.splitext(file_path)[0]),
         "headers": headers,

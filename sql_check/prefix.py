@@ -1,6 +1,9 @@
+import logging
 import os.path
 from datetime import datetime
 from shutil import copyfile
+
+log = logging.getLogger(__name__)
 
 
 def timestamp(file_path, directory=None):
@@ -20,6 +23,7 @@ def timestamp(file_path, directory=None):
         prefix + "_" + os.path.basename(file_path)
     )
 
+    log.info("Copy file {} to {}".format(file_path, copy_path))
     copyfile(file_path, copy_path)
 
     return copy_path
