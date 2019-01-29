@@ -6,6 +6,7 @@ from datetime import datetime
 from getpass import getuser
 
 import yaml
+from mysql.connector import Error as MySQLError
 
 import month as month_date
 import query as runner
@@ -50,11 +51,15 @@ def monthly_check(month, source, output):
         query_src = os.path.join(source, query)
         query_name = os.path.splitext(query)[0]
         query_dir = os.path.join(report_directory, query_name)
+
         log.info("Creating query report directory at {}".format(query_dir))
         os.mkdir(query_dir)
 
-        result = runner.execute(query_src, query_dir)
-        results.append(result)
+        try:
+            result = runner.execute(query_src, query_dir)
+            results.append(result)
+        except MySQLError as err:
+            log.error("Something went wrong with query {}, MySQL error: {}".format(query_name, err))
 
     write_report(month, results, report_directory)
 
