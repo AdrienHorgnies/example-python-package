@@ -9,6 +9,8 @@ from mysql.connector import Error as MySQLError
 
 import month as month_date
 import query as runner
+from CursorProvider import CursorProvider
+from chest import Chest
 from confargparse import ConfArgParser
 
 log = logging.getLogger(__name__)
@@ -138,8 +140,10 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--month', conf_key="monthly_check.month", default=month_date.previous(),
                         type=month_date.from_str,
                         help="6 digits, 4 for the year then 2 for the month (ex.: 201901 is Jan 2019).")
+    CursorProvider.add_arguments_to(parser)
 
     args = parser.parse_args()
+    Chest(vars(args))
 
     logging.basicConfig(level=config["logging"]["level"], format=config["logging"]["format"])
 

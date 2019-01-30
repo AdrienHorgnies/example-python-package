@@ -10,6 +10,7 @@ import yaml
 
 import prefix
 from CursorProvider import CursorProvider
+from chest import Chest
 
 log = logging.getLogger(__name__)
 
@@ -98,8 +99,10 @@ if __name__ == "__main__":
     parser.add_argument('file_path', help="A file containing a single SELECT statement")
     parser.add_argument('-d', '--directory', help="Where to create a timestamp prefixed copy  of the input file"
                                                   " and operate on it rather than the original")
+    CursorProvider.add_arguments_to(parser)
 
     args = parser.parse_args()
+    Chest(vars(args))
 
     with open("application.yml", "r") as config_file:
         config = yaml.load(config_file)
