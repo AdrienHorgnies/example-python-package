@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import argparse
 import logging
 import os
 from datetime import datetime
@@ -10,6 +9,7 @@ from mysql.connector import Error as MySQLError
 
 import month as month_date
 import query as runner
+from confargparse import ConfArgParser
 
 log = logging.getLogger(__name__)
 
@@ -128,25 +128,19 @@ if __name__ == "__main__":
     desc = "Runs all SQL statements from source directory, " \
            "writes results and reports in the output directory" \
            " in a sub directory corresponding to the month"
-    parser = argparse.ArgumentParser(description=desc)
+    parser = ConfArgParser(description=desc, config=config)
 
-    parser.add_argument('-s', '--source', default=config["monthly_check"]["source"],
+    parser.add_argument('-s', '--source', conf_key="monthly_check.source", required=True,
                         help="directory where to find SQL SELECT statements,"
                              " one single statement per file. Can be configured with monthly_check.source")
-    parser.add_argument('-o', '--output', default=config["monthly_check"]["output"],
+    parser.add_argument('-o', '--output', conf_key="monthly_check.output", required=True,
                         help="Where to write the report. Can be configured with monthly_check.output.")
-    parser.add_argument('-m', '--month', default=month_date.previous(), type=month_date.from_str,
-                        help="6 digits, 4 for the year then 2 for the month (ex.: 201901 is Jan 2019)")
+    parser.add_argument('-m', '--month', conf_key="monthly_check.month", default=month_date.previous(),
+                        type=month_date.from_str,
+                        help="6 digits, 4 for the year then 2 for the month (ex.: 201901 is Jan 2019).")
 
     args = parser.parse_args()
 
     logging.basicConfig(level=config["logging"]["level"], format=config["logging"]["format"])
-
-    if not args.source:
-        log.critical("source must be specified through option -s, --source or configuration monthly_check.source")
-        exit(1)
-    if not args.output:
-        log.critical("output must be specified through option -o, --output or configuration monthly_check.output")
-        exit(2)
 
     monthly_check(args.month, args.source, args.output)
