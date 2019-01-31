@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import argparse
 import csv
 import logging
 import os.path
@@ -11,6 +10,7 @@ import yaml
 import prefix
 from CursorProvider import CursorProvider
 from chest import Chest
+from confargparse import ConfArgParser
 
 log = logging.getLogger(__name__)
 
@@ -93,8 +93,11 @@ def execute(file_path, directory=None):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Runs a SQL SELECT statement, append a report to the file "
-                                                 "and export results, if any, to a csv file")
+    with open("application.yml", "r") as config_file:
+        config = yaml.load(config_file)
+
+    parser = ConfArgParser(description="Runs a SQL SELECT statement, append a report to the file "
+                                                 "and export results, if any, to a csv file", config=config)
 
     parser.add_argument('file_path', help="A file containing a single SELECT statement")
     parser.add_argument('-d', '--directory', help="Where to create a timestamp prefixed copy  of the input file"
@@ -103,9 +106,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     Chest(vars(args))
-
-    with open("application.yml", "r") as config_file:
-        config = yaml.load(config_file)
 
     logging.basicConfig(level=config["logging"]["level"], format=config["logging"]["format"])
 
