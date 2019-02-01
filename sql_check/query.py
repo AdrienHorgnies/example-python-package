@@ -57,7 +57,7 @@ def execute(file_path, directory=None):
     log.debug("Done executing query")
 
     rows = cursor.fetchall()
-    log.debug("  With results: {}".format(rows))
+    log.debug("  With results: {} rows".format(len(rows)))
 
     headers = [header[0] for header in cursor.description]
     result_path = os.path.splitext(query_path)[0] + ".csv"
