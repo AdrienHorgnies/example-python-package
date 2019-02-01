@@ -139,7 +139,8 @@ if __name__ == "__main__":
                         help="Where to write the report. Can be configured with monthly_check.output.")
     parser.add_argument('-m', '--month', conf_key="monthly_check.month", default=month_date.previous(),
                         type=month_date.from_str,
-                        help="6 digits, 4 for the year then 2 for the month (ex.: 201901 is Jan 2019).")
+                        help="6 digits, 4 for the year then 2 for the month (ex.: 201901 is Jan 2019)."
+                             " Default value is last month.")
     CursorProvider.add_arguments_to(parser)
 
     args = parser.parse_args()
